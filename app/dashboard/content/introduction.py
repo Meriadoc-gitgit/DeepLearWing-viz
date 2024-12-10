@@ -81,6 +81,8 @@ def introduction():
             et ainsi **réduire le temps et les coûts** de R&D.
         """)
         st.markdown(f"##### Écoulement autour du profil d'aile NACA0012")
+
+        print(os.getcwd())
     
         gif_path = "dashboard/content/naca0012_vorticity.gif"
         data_url = load_gif(gif_path)
