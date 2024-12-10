@@ -5,6 +5,7 @@ from matplotlib.animation import FuncAnimation
 
 import os
 
+
 def naca0012(num_points=150):
     """Génère les coordonnées du profil NACA 0012."""
     c = 1.0  # longueur de corde

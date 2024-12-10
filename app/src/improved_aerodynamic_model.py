@@ -108,7 +108,7 @@ class ImprovedAerodynamicModel:
                                          self.df['reynolds_effect'])
         
         return self
-        
+
     def segment_flow_regimes(self):
         self.df['flow_regime'] = pd.cut(
             self.df['reynolds'],
@@ -270,6 +270,8 @@ class ImprovedAerodynamicModel:
 #     model.save_model('model/xgboost_model.joblib')
 #     return model
 
+import streamlit as st
+@st.cache_data
 def display_model_performance(model):
     metrics_data = []
     for regime, metrics in model.regime_models.items():

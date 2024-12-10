@@ -46,8 +46,10 @@ import pandas as pd
 import numpy as np
 from typing import Union, Optional
 from tqdm import tqdm
+import streamlit as st
 
 
+@st.cache_resource
 def engineer_aerodynamic_features(
     df,
     sample_size: Optional[int] = None,
@@ -124,6 +126,7 @@ def engineer_aerodynamic_features(
 # --------------------------------
 # STRATIFIED SAMPLING
 # --------------------------------
+@st.cache_resource
 def create_stratified_sample(
     df, 
     save_path: Optional[str] = None,

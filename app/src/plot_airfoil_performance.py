@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
+import streamlit as st
 
+@st.cache_data
 def plot_airfoil_performance(df, sample_size=30):
     # Calculer CL max et CD min pour chaque profil
     performance_metrics = df.groupby('name').agg({
