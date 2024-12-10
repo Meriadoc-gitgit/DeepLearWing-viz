@@ -1,7 +1,6 @@
 import streamlit as st
 import os 
 import base64
-from src.naca0012 import *
 
 def load_gif(gif_path):
     file_ = open(gif_path, "rb")
@@ -64,42 +63,6 @@ def introduction():
         st.markdown("""
             L'étude de ces paramètres permet d'anticiper les performances aérodynamiques dans un large éventail de conditions.
         """)
-        # Paramètres du profil NACA 0012
-        m = 0.0    # Cambrure maximale (0% de la corde)
-        p = 0.0    # Position de la cambrure maximale (0% de la corde)
-        t = 0.12   # Épaisseur relative (12% de la corde)
-
-        # Génération des coordonnées
-        x_airfoil, y_airfoil = naca4_profile(m, p, t)
-
-        panels = define_panels(x_airfoil, y_airfoil)
-        freestream = Freestream(u_inf=1.0, alpha=5.0)
-        A = source_contribution_normal(panels)
-        b = build_rhs(panels, freestream)
-        # 6. Résolution du système linéaire pour obtenir les intensités des sources
-        sigma = np.linalg.solve(A, b)
-        for i, panel in enumerate(panels):
-            panel.sigma = sigma[i]
-        get_tangential_velocity(panels, freestream)
-
-
-        # 8. Calcul du champ de vitesse
-        Nx, Ny = 200, 200  # Nombre de points dans la grille
-        X_start, X_end = -0.5, 1.5
-        Y_start, Y_end = -0.5, 0.5
-        X, Y = np.meshgrid(np.linspace(X_start, X_end, Nx), np.linspace(Y_start, Y_end, Ny))
-
-        # Initialisation des composantes de vitesse
-        u = freestream.u_inf * np.cos(freestream.alpha) * np.ones_like(X)
-        v = freestream.u_inf * np.sin(freestream.alpha) * np.ones_like(X)
-
-        # Calcul des vitesses induites par les sources
-        for panel in panels:
-            dx = X - panel.xc
-            dy = Y - panel.yc
-            r_squared = dx**2 + dy**2
-            u += panel.sigma / (2 * np.pi) * dx / r_squared
-            v += panel.sigma / (2 * np.pi) * dy / r_squared
 
 
 
@@ -126,5 +89,5 @@ def introduction():
 
 
     st.markdown("---")
-    st.markdown("""L'ensemble du code réalísé par Johan Ghré et Hoang Thuy Duong Vu""")
+    st.markdown("""L'ensemble du code réalisé par Johan Ghré et Hoang Thuy Duong Vu""")
         
