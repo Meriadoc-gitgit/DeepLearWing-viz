@@ -123,3 +123,8 @@ def introduction():
         data_url = load_gif(gif_path)
         st.markdown(f"<div style='text-align:center;'><img src='data:image/gif;base64,{data_url}' alt='NACA0012 Flow'></div>",
                     unsafe_allow_html=True)
+
+
+    st.markdown("---")
+    st.markdown("""L'ensemble du code réalísé par Johan Ghré et Hoang Thuy Duong Vu""")
+        
