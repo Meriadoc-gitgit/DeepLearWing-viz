@@ -113,10 +113,10 @@ def engineer_aerodynamic_features(
         df.reset_index(inplace=True,drop=True)  # Reset the index of the DataFrame after sampling
 
     
-    # # Sauvegarde si un chemin est spécifié
-    # if save_path:
-    #     print(f"Sauvegarde des résultats dans {save_path}...")
-    #     df.to_csv(save_path,index=False)
+    # Sauvegarde si un chemin est spécifié
+    if save_path:
+        print(f"Sauvegarde des résultats dans {save_path}...")
+        df.to_csv(save_path,index=False)
     
     print("Feature engineering terminé!")
     return df
@@ -147,9 +147,9 @@ def create_stratified_sample(
     sample = sample.drop(['angle_bin', 'reynolds_bin'], axis=1)
 
     # Sauvegarde si un chemin est spécifié
-    # if save_path:
-    #     print(f"Sauvegarde des résultats dans {save_path}...")
-    #     sample.sample(n=min(n, len(sample)), random_state=42).to_csv(save_path,index=False)
+    if save_path:
+        print(f"Sauvegarde des résultats dans {save_path}...")
+        sample.sample(n=min(n, len(sample)), random_state=42).to_csv(save_path,index=False)
 
     print("Sample stratification terminé!")
     

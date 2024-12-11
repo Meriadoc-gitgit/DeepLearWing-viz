@@ -6,9 +6,6 @@ from src.preprocess import engineer_aerodynamic_features, create_stratified_samp
 
 def main():
 
-    # market_data = load_csv("data/output/Bitcoin_market_historical.csv")
-    # tweet_data = load_csv("data/output/Bitcoin_tweets_historical.csv")
-
     @st.cache_data
     def load_csv(data_path):
         
