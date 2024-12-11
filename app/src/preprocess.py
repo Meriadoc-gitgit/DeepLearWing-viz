@@ -47,6 +47,8 @@ import numpy as np
 from typing import Union, Optional
 from tqdm import tqdm
 import streamlit as st
+import kagglehub
+import os
 
 
 @st.cache_resource
@@ -154,3 +156,33 @@ def create_stratified_sample(
     print("Sample stratification terminé!")
     
     return sample.sample(n=min(n, len(sample)), random_state=42)
+
+
+
+# # Chargement des données
+# print("Chargement des données")
+
+# # Download data
+# dataset_path = kagglehub.dataset_download("victorienmichel/deeplearwing")
+# print("Fin du téléchargement")
+
+# # Verify that the data has been downloaded
+# files = os.listdir(dataset_path)
+# print("Data path:",dataset_path)
+# print("Files in dataset directory:",files)
+
+# # Load data
+# csv_file = os.path.join(dataset_path, files[0])
+# df = pd.read_csv(csv_file)
+
+# featured_df = engineer_aerodynamic_features(
+#     df,
+#     sample_size=200000,
+#     save_path='data/feature_engineered_dataset.csv'
+# )
+
+# stratified_df = create_stratified_sample(
+#     featured_df, 
+#     n=200000, 
+#     save_path='data/echantillon_stratifie.csv'
+# ) 

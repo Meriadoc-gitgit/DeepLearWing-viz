@@ -12,7 +12,7 @@ sns.set_theme(style="darkgrid")  # Options: "darkgrid", "whitegrid", "dark", "wh
 sns.set_context("notebook")  # Options: "paper", "notebook", "talk", "poster"
 
 
-def data_management(df, featured_df, stratified_df):
+def data_management(featured_df, stratified_df):
     """
     Data exploration page of the dashboard
     """
@@ -27,6 +27,22 @@ def data_management(df, featured_df, stratified_df):
     st.markdown("---")
 
     st.markdown("## Exploration de données")
+
+
+    # print("Chargement des données")
+
+    # Download data
+    dataset_path = kagglehub.dataset_download("victorienmichel/deeplearwing")
+    print("Fin du téléchargement")
+
+    # Verify that the data has been downloaded
+    files = os.listdir(dataset_path)
+    print("Data path:",dataset_path)
+    print("Files in dataset directory:",files)
+
+    # Load data
+    csv_file = os.path.join(dataset_path, files[0])
+    df = pd.read_csv(csv_file)
     
 
 

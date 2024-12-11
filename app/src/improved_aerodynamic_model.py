@@ -10,6 +10,7 @@ from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
 import xgboost as xgb
 import math
 
+
 # df = pd.read_csv('data/echantillon_stratifie.csv')
 # ---------------------------------------------------------------------------
 # Classe du modèle XGBoost
@@ -124,6 +125,7 @@ class ImprovedAerodynamicModel:
         
         return self
         
+
     def prepare_features(self):
         self.features = [
             'angle_norm', 'log_reynolds_norm',
@@ -270,8 +272,8 @@ class ImprovedAerodynamicModel:
 #     model.save_model('model/xgboost_model.joblib')
 #     return model
 
-import streamlit as st
-@st.cache_data
+# import streamlit as st
+# @st.cache_data
 def display_model_performance(model):
     metrics_data = []
     for regime, metrics in model.regime_models.items():
