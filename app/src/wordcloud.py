@@ -1,29 +1,58 @@
 import re
-import io
-from collections import defaultdict
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
-import streamlit as st
+import pdfplumber
+
+import nltk
+from nltk.corpus import stopwords
+
+# Download stopwords
+nltk.download('stopwords')
+
+# Get English stopwords
+english_stopwords = set(stopwords.words('english'))
+
+
+def read_pdf_pdfplumber(file_path):
+    text = ""
+    with pdfplumber.open(file_path) as pdf:
+        for page in pdf.pages:
+            text += page.extract_text()
+    return text
+
+
+def remove_stop_words(corpus) : 
+  for text, val in corpus.items() : 
+    tmp = val.split(' ')
+    # print(tmp)
+    for stop_word in english_stopwords:
+      if stop_word in tmp:
+        # print(stop_word)
+        tmp.remove(stop_word)
+    tmp = " ".join(tmp)
+    # print(tmp)
+    corpus[text] = tmp
+  return corpus
+
+
+def extract_sections(text):
+    # Regex to match headers
+    header_pattern = r"(?<=\n)([A-Za-z0-9 .]+):(?!\S)|(?<=\n)(\d+ [A-Za-z0-9 ]+)"
+    matches = list(re.finditer(header_pattern, text))
+
+    sections = {}
+    for i, match in enumerate(matches):
+        start = match.end()
+        end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+        header = match.group().strip(': ')
+        sections[header] = text[start:end].strip()
+    
+    return sections
 
 @st.cache_data
-def shape_wordcloud(df, theme):
-    word_freq = defaultdict(int)
-    for entry in df[theme]:
-        pairs = re.findall(r'\[([^,]+), (\d+)\]', entry)    # Extraire les paires mot-fréquence
-        for word, freq in pairs:
-            word_freq[word] += int(freq)
-
-    wordcloud = WordCloud(width=600, height=600, background_color='white').generate_from_frequencies(word_freq)
-
-    fig, ax = plt.subplots(figsize=(10, 10), facecolor='white')
-    ax.imshow(wordcloud, interpolation='bilinear')
-    plt.subplots_adjust(left=0.03, right=0.97, top=0.97, bottom=0.03)
+def visualize(ax, label):
+    
+    wordcloud = WordCloud(width=500, height=400).generate(ax[label])
+    plt.imshow(wordcloud)
     plt.axis('off')
-
-    image_stream = io.BytesIO()
-    plt.savefig(image_stream, format='png')
-    image_stream.seek(0)
-
-    plt.close()
-
-    return image_stream
+    plt.title(label)
