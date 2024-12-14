@@ -2,6 +2,7 @@ import re
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import pdfplumber
+import streamlit as st
 
 import nltk
 from nltk.corpus import stopwords
@@ -37,7 +38,7 @@ def remove_stop_words(corpus) :
 
 def extract_sections(text):
     # Regex to match headers
-    header_pattern = r"(?<=\n)([A-Za-z0-9 .]+):(?!\S)|(?<=\n)(\d+ [A-Za-z0-9 ]+)"
+    header_pattern = r"(?<=\n)(\d+ [A-Za-z]+(?: [A-Za-z]+)*)"
     matches = list(re.finditer(header_pattern, text))
 
     sections = {}

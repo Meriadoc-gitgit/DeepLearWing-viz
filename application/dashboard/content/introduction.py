@@ -84,7 +84,7 @@ def introduction():
 
         print(os.getcwd())
     
-        gif_path = "app/dashboard/content/naca0012_vorticity.gif"
+        gif_path = "dashboard/content/naca0012_vorticity.gif"
         data_url = load_gif(gif_path)
         st.markdown(f"<div style='text-align:center;'><img src='data:image/gif;base64,{data_url}' alt='NACA0012 Flow'></div>",
                     unsafe_allow_html=True)

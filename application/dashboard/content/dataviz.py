@@ -9,6 +9,9 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from copy import deepcopy
+import os
+
+from src.wordcloud import *
 
 # Configuration générale pour tous les plots
 layout_config = dict(
@@ -28,6 +31,12 @@ def dataviz(df_sample):
     st.markdown("---")
 
     col1, col2 = st.columns([3, 2])
+
+
+    print(os.getcwd())
+    pdf_text = read_pdf_pdfplumber("data/541.pdf")
+    sections = remove_stop_words(extract_sections(pdf_text))
+
 
     with col1:
         
@@ -59,83 +68,6 @@ def dataviz(df_sample):
                         marginal='box')
         fig2.update_layout(**layout_config)
         st.plotly_chart(fig2)
-
-
-
-        # df_tmp = deepcopy(df_sample[:2000])
-        # # Scatter plot cd vs cl
-        # df_sample2 = df_tmp.sort_values('reynolds')  # Trier d'abord par Reynolds
-
-        # # Créer les bins avec des labels numériques ordonnés
-        # reynolds_bins = pd.qcut(df_sample2['reynolds'], 
-        #                     q=4,  # 4 bins pour plus de clarté
-        #                     labels=['1', '2', '3', '4'],  # Labels numériques ordonnés
-        #                     duplicates='drop')
-
-        # fig5 = px.scatter(df_sample2, 
-        #                 x='cd', 
-        #                 y='cl',
-        #                 color='angle',
-        #                 title='Polaire de traînée',
-        #                 labels={'cd': 'Coefficient de traînée',
-        #                         'cl': 'Coefficient de portance',
-        #                         'angle': 'Angle d\'attaque (°)'},
-        #                 animation_frame=reynolds_bins,
-        #                 range_x=[0, df_sample['cd'].quantile(0.99)],
-        #                 range_y=[df_sample['cl'].min(), df_sample['cl'].max()])
-
-        # # Calculer les plages de Reynolds pour chaque bin
-        # reynolds_ranges = df_sample2.groupby(reynolds_bins)['reynolds'].agg("mean")
-        # frame_titles = [f"Re: {int(reynolds_ranges[row]):,}" 
-        #                 for row in range(len(reynolds_ranges))]
-
-        # fig5.update_layout(
-        #     **layout_config,
-        #     updatemenus=[{
-        #         'buttons': [
-        #             {
-        #                 'args': [None, {'frame': {'duration': 1000, 'redraw': True},
-        #                             'fromcurrent': True,
-        #                             'transition': {'duration': 300}}],
-        #                 'label': 'Play',
-        #                 'method': 'animate'
-        #             },
-        #             {
-        #                 'args': [[None], {'frame': {'duration': 0, 'redraw': False},
-        #                                 'mode': 'immediate',
-        #                                 'transition': {'duration': 0}}],
-        #                 'label': 'Pause',
-        #                 'method': 'animate'
-        #             }
-        #         ],
-        #         'direction': 'left',
-        #         'pad': {'r': 10, 't': 87},
-        #         'showactive': False,
-        #         'type': 'buttons',
-        #         'x': 0.1,
-        #         'xanchor': 'right',
-        #         'y': 0,
-        #         'yanchor': 'top'
-        #     }],
-        #     sliders=[{
-        #         'currentvalue': {
-        #             'font': {'size': 12},
-        #             'prefix': 'Nombre de Reynolds: ',
-        #             'visible': True,
-        #             'xanchor': 'right'
-        #         },
-        #         'steps': [
-        #             {
-        #                 'args': [[str(i+1)], {'frame': {'duration': 0, 'redraw': True},
-        #                                     'mode': 'immediate',
-        #                                     'transition': {'duration': 0}}],
-        #                 'label': title,
-        #                 'method': 'animate'
-        #             } for i, title in enumerate(frame_titles)
-        #         ]
-        #     }]
-        # )
-        # st.plotly_chart(fig5)
 
     
 
@@ -189,3 +121,40 @@ def dataviz(df_sample):
 
         
         
+
+
+
+
+
+    # Wordcloud
+    # Streamlit app layout
+
+    all_text = " ".join(sections.values())
+
+    # General Word Cloud
+    st.header("General Word Cloud")
+    wordcloud = WordCloud(width=800, height=600, background_color="black").generate(all_text)
+
+    # Display the general word cloud
+    fig, ax = plt.subplots(figsize=(10, 8))
+    ax.imshow(wordcloud, interpolation="bilinear")
+    ax.axis("off")
+    st.pyplot(fig)
+
+    # Section-specific Word Clouds
+    st.header("Section-Specific Word Clouds")
+    cols = st.columns(2)  # Two columns for layout
+
+
+    # Loop through sections and generate word clouds
+    for i, (section_title, section_text) in enumerate(sections.items()):
+        wordcloud_section = WordCloud(width=800, height=600, background_color="black").generate(section_text)
+
+        # Display the word cloud in the appropriate column
+        fig, ax = plt.subplots(figsize=(8, 6))
+        ax.imshow(wordcloud_section, interpolation="bilinear")
+        ax.axis("off")
+        ax.set_title(section_title, fontsize=16)
+        
+        # Alternate between columns
+        cols[i % 2].pyplot(fig)
