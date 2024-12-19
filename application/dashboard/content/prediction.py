@@ -7,6 +7,9 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from copy import deepcopy
+from src.improved_aerodynamic_model import *
+
+import joblib
 
 # Configuration générale pour tous les plots
 layout_config = dict(
@@ -14,24 +17,29 @@ layout_config = dict(
     height=500,  # Hauteur augmentée
     font=dict(size=14)  # Taille de police augmentée
 )
-from src.improved_aerodynamic_model import *
+# from src.improved_aerodynamic_model import *
 
 def prediction(df_sample):
-    """"""
+    """
+    Predict the Lift-to-Drag ratio using the trained XGBoost model.
+    """
+    print(os.getcwd())
+    model = joblib.load('dashboard/content/xgboost_model.joblib')
+
     # df_sample = pd.read_csv('data/echantillon_stratifie.csv')
 
-    df_model = df_sample.copy()
-    model = ImprovedAerodynamicModel(df_model)
-    model.add_geometric_features()
-    model.create_advanced_features()
-    model.segment_flow_regimes()
-    model.prepare_features()
-    model.train()
+    # df_model = df_sample.copy()
+    # model = ImprovedAerodynamicModel(df_model)
+    # model.add_geometric_features()
+    # model.create_advanced_features()
+    # model.segment_flow_regimes()
+    # model.prepare_features()
+    # model.train()
     
-    # if not os.path.exists('model/xgboost_model.joblib'):
+    # if not os.path.exists('content/xgboost_model.joblib'):
     #     model = train_and_save_model()
     # else:
-    #     model = ImprovedAerodynamicModel.load_model('model/xgboost_model.joblib')
+    #     model = ImprovedAerodynamicModel.load_model('content/xgboost_model.joblib')
 
     st.markdown("## Modélisation & Prédiction")
     st.markdown("""

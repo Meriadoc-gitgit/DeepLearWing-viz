@@ -10,6 +10,8 @@ from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
 import xgboost as xgb
 import math
 
+import joblib
+
 
 # df = pd.read_csv('data/echantillon_stratifie.csv')
 # ---------------------------------------------------------------------------
@@ -203,12 +205,12 @@ class ImprovedAerodynamicModel:
         
         return self
 
-    # def save_model(self, filepath):
-    #     joblib.dump(self, filepath)
+    def save_model(self, filepath):
+        joblib.dump(self, filepath)
         
-    # @classmethod
-    # def load_model(cls, filepath):
-    #     return joblib.load(filepath)
+    @classmethod
+    def load_model(cls, filepath):
+        return joblib.load(filepath)
 
     def prepare_input_data(self, angle, reynolds):
         input_df = pd.DataFrame({
