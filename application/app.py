@@ -9,10 +9,10 @@ def main():
         
         featured_df = pd.read_csv("data/feature_engineered_dataset.csv")
         stratified_df = pd.read_csv("data/echantillon_stratifie.csv")
+        
         return featured_df, stratified_df
 
     featured_df, stratified_df = load_csv()
-
 
     print("BEGINNING OF THE DASHBOARD")
 

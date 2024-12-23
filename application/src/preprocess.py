@@ -44,11 +44,9 @@ def refill_na_values(df):
 # --------------------------------
 import pandas as pd
 import numpy as np
-from typing import Union, Optional
+from typing import Optional
 from tqdm import tqdm
 import streamlit as st
-import kagglehub
-import os
 
 
 @st.cache_resource

@@ -26,7 +26,6 @@ def introduction():
 
         Notre **objectif** est de **comprendre, explorer et prédire les performances aérodynamiques d'une aile** en fonction de paramètres tels que l'angle d'attaque, le nombre de Reynolds, ou encore la géométrie du profil.
 
-
         Les profils d'aile influencent le flux d'air, conditionnant ainsi la **portance** ($C_L$), la **traînée** ($C_D$) et le **moment** ($C_M$).  
         
         Le ratio $\\frac{L}{D} = \\frac{C_L}{C_D}$ est un indicateur clé de l'**efficacité aérodynamique** : Un ratio élevé signifie plus de portance pour moins de traînée, ce qui est optimal pour le vol.

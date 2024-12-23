@@ -2,9 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.path import Path
 from matplotlib.animation import FuncAnimation
-
 import os
-
 
 def naca0012(num_points=150):
     """Génère les coordonnées du profil NACA 0012."""

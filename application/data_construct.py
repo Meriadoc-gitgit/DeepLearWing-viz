@@ -4,8 +4,6 @@ import pandas as pd
 
 from src.preprocess import *
 
-
-
 # Chargement des données
 print("Chargement des données")
 data_path = "victorienmichel/deeplearwing"
@@ -25,7 +23,6 @@ df = pd.read_csv(csv_file)
 
 print("Chargement avec succès")
 
-
 featured_df = engineer_aerodynamic_features(
     df,
     sample_size=200000,
@@ -36,4 +33,4 @@ stratified_df = create_stratified_sample(
     featured_df, 
     n=200000, 
     save_path='data/echantillon_stratifie.csv'
-) 
+)       

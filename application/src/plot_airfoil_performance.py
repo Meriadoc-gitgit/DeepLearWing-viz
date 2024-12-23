@@ -81,3 +81,4 @@ def plot_airfoil_performance(df, sample_size=30):
     
     
     return pareto_optimal
+

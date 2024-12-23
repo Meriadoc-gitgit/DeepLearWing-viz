@@ -4,13 +4,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import kagglehub
+import plotly.graph_objects as go
 
 # Set a Seaborn style
 sns.set_theme(style="darkgrid")  # Options: "darkgrid", "whitegrid", "dark", "white", "ticks"
 
 # Optional: Set a specific context for the plots (adjusts font size and other elements)
 sns.set_context("notebook")  # Options: "paper", "notebook", "talk", "poster"
-
 
 def data_management(featured_df, stratified_df):
     """
@@ -235,22 +235,145 @@ def data_management(featured_df, stratified_df):
         ```""")
         st.write(stratified_df[["cd", "cl", "cm"]].describe())
 
+        st.markdown("""
+        #### 🔍 Analyse de la Matrice de Corrélation
+
+        ##### 1. Corrélations Fortes (> 0.7)
+        - **Angle et cl** : Très forte corrélation (0.919)
+        - **Angle × Reynolds** : Forte influence sur la performance (0.782)
+        - **Reynolds** : Forte corrélation entre ses différentes représentations (>0.93)
+
+        ##### 2. Corrélations Modérées (0.3-0.7)
+        - **Lift-to-Drag Ratio** : 
+          - Positif avec angle (0.544) et cl (0.733)
+          - Négatif avec cd (-0.327)
+        - **cd** : Corrélation modérée avec Angle^2 (0.516) et |Angle| (0.514)
+
+        ##### 3. Point Clé
+        - Le coefficient de moment (cm) reste largement indépendant (corrélations < 0.2)
+        - Les transformations du Reynolds (Log, Normalized) sont fortement corrélées entre elles
+        """)
+
+        st.markdown("""
+        #### 🎯 Impact sur le Ratio Lift-to-Drag
+
+        La matrice révèle des informations cruciales pour l'optimisation du ratio L/D :
+
+        ##### Influences Positives
+        - **Coefficient de portance (cl)** : Forte corrélation (0.733)
+        - **Angle d'attaque** : Corrélation modérée (0.544)
+        - **Angle × Reynolds** : Corrélation modérée (0.533)
+
+        ##### Influences Négatives
+        - **Coefficient de traînée (cd)** : Corrélation négative (-0.327)
+        - **Coefficient de moment (cm)** : Légèrement négatif (-0.271)
+
+        
+        """)
+
     with col2:
         st.markdown("### Matrice de corrélation")
 
-        # Calculate the correlation matrix
-        correlation_matrix = stratified_df[['angle', 'reynolds', 'cl', 'cd', 'cm']].corr()
-
-        # Streamlit App
-        # Display correlation matrix using a heatmap
-        fig, ax = plt.subplots(figsize=(8, 6))  # Adjust the figure size
-        sns.heatmap(correlation_matrix, annot=True, ax=ax, cbar_kws={'shrink': 0.8})
-
-        # Add title to the plot
-        plt.title('Correlation Matrix', fontsize=14)
+        # Afficher les colonnes disponibles
+        st.write("Colonnes disponibles dans le dataset :", stratified_df.columns.tolist())
+        
+        # Sélectionner toutes les colonnes numériques pertinentes pour la corrélation
+        numeric_cols = stratified_df.select_dtypes(include=['float64', 'int64']).columns.tolist()
+        correlation_matrix = stratified_df[numeric_cols].corr()
+        
+        # Créer la heatmap
+        fig, ax = plt.subplots(figsize=(10, 8))
+        sns.heatmap(correlation_matrix, 
+                   annot=True, 
+                   cmap='RdGy_r', 
+                   center=0,
+                   fmt='.3f',
+                   square=True,
+                   ax=ax)
+        
+        plt.title('Correlation Matrix')
+        plt.tight_layout()
 
         # Display the plot in Streamlit
         st.pyplot(fig)
 
-        st.markdown("La matrice met en évidence des relations physiques attendues, telles que la forte dépendance entre l'angle d'attaque et la portance, ainsi qu'une interaction notable entre le nombre de Reynolds et la traînée.")
+        st.markdown("""
+        ##### Conclusion
+        Pour maximiser le ratio L/D, il faut :
+        1. Privilégier les configurations optimisant cl
+        2. Contrôler l'angle d'attaque dans la plage optimale
+        3. Minimiser cd tout en maintenant un bon cl
+        4. Le nombre de Reynolds a un effet modéré mais positif (0.237)
+        """)
 
+
+    st.markdown("### 📊 Distribution des Mesures par Profil")
+
+    # Analyse de la distribution des mesures par profil
+    
+    profile_counts = stratified_df.groupby('name').agg({
+        'Lift-to-Drag Ratio': ['count', 'mean']
+    }).round(2)
+    
+    profile_counts.columns = ['Nombre de Mesures', 'L/D Moyen']
+    profile_counts = profile_counts.sort_values('Nombre de Mesures', ascending=True)
+
+    # Création du graphique
+    fig = go.Figure()
+
+    # Barres horizontales pour le nombre de mesures
+    fig.add_trace(go.Bar(
+        x=profile_counts['Nombre de Mesures'],
+        y=profile_counts.index,
+        orientation='h',
+        name='Nombre de Mesures',
+        marker_color='lightgreen',
+        hovertemplate="<b>%{y}</b><br>" +
+                     "Mesures: %{x}<br>" +
+                     "<extra></extra>"
+    ))
+
+    # Mise en page
+    fig.update_layout(
+        title=dict(
+            text='Répartition des Mesures par Profil',
+            x=0.5,
+            xanchor='center'
+        ),
+        xaxis_title="Nombre de Mesures",
+        yaxis_title="Profil d'Aile",
+        height=800,
+        showlegend=False,
+        plot_bgcolor='white',
+        yaxis=dict(
+            showgrid=True,
+            gridcolor='rgba(128,128,128,0.2)',
+            zeroline=False,
+        ),
+        xaxis=dict(
+            showgrid=True,
+            gridcolor='rgba(128,128,128,0.2)',
+            zeroline=False,
+        ),
+        hoverlabel=dict(
+            bgcolor="white",
+            font_size=12,
+            font_family="Arial"
+        )
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    st.markdown("""
+    #### 📈 Analyse de la Distribution
+
+    Ce graphique montre la répartition des mesures entre les différents profils :
+    - Permet d'identifier les profils les plus/moins testés
+    - Aide à évaluer la représentativité des données par profil
+    - Met en évidence d'éventuels déséquilibres dans notre jeu de données
+        
+    #### 💡 Implications pour l'Analyse
+    - Les profils avec plus de mesures offrent des résultats plus fiables
+    - Les profils moins testés pourraient nécessiter des tests supplémentaires
+    - La distribution peut influencer la robustesse de nos comparaisons
+    """)
